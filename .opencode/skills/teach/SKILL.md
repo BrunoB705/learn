@@ -198,11 +198,20 @@ It closes on exactly one of these three, and **you must always name which one ha
 3. **Update the concept notes** so the graph reflects where he actually ended, not where the session started.
 4. **Say it's closed** — end with an explicit line: *"Sesión cerrada. Lo siguiente: X."*
 
-## Formatting — math renders as LaTeX
+## Formatting — math notation differs per surface
 
-Session notes live in your Obsidian vault, which renders LaTeX natively — and LaTeX is the house notation for math everywhere in the session, chat included. So whenever math notation is involved — explanations, questions, quiz options and grades, anything — write it in LaTeX instead of plain-text approximations:
+Two surfaces, two notations. Getting this wrong is visible: this terminal **cannot render LaTeX**, so `$x^5$` shows up literally as `$x^5$` — with the dollar signs — which reads as broken.
 
-- Inline math: `$f(x)$`
-- Centered display math: `$$` fenced on its own lines, e.g. `$$\n f(x) \n$$`
+**In chat and in the `question` tool (quiz questions, options, grades, explanations): plain Unicode math, never `$...$`.** The option labels and question text arrive as raw text — no markdown, no LaTeX. Write the thing a person reads off a screen:
 
-If LaTeX can be used, it should be. Write $f(x) = x^2$, not `f(x) = x^2`.
+- Superscripts: `x⁵`, `5x⁴`, `x^(n+1)` (use the caret form when there is no clean glyph)
+- Derivative: `f′(x)` (prime), `f″(x)` for second order — not `f'(x)` inside `$`
+- Roots, fractions, symbols: `√x`, `a/b`, `√2`, `π`, `∫`, `≈`, `≠`, `≤`, `θ`
+- Plain but correct beats fancy but unreadable: `f(x) = x² + 3x + 2`, not `f(x) = x^2 + 3x + 2`
+
+**In the session note and the `Conceptos/` notes (Obsidian): LaTeX.** That surface renders it natively, and the note is what he re-reads later:
+
+- Inline: `$f(x) = x^5$`
+- Display: `$$` fenced on its own lines around the expression, so Obsidian centers it
+
+So the same quiz appears twice: as `5x⁴` on the screen where he's answering, as `$5x^4$` in the note where he reviews. Never put `$...$` in chat; never drop to `x^5` in the note.

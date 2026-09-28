@@ -107,12 +107,12 @@ The two principles are *how* you teach. This is *when* — the shape of a teachi
 
 Everything you ask him goes through the native `question` tool. Two modes:
 
-- **Graded quiz** — the question has a definite right answer (probing his level, checking a node, a Socratic discovery attempt). You write down the correct answer *for yourself first*, present the options, and grade his answer the moment it comes back: mark ✓/✗, state the correct answer, and give the reasoning *after* he answers. If he dodges, answers custom/"Type your own answer", or effectively says he doesn't know, grade it as a miss — that's data (a ceiling marker in Phase 1a), not a failure.
+- **Graded quiz** — the question has a definite right answer (probing his level, checking a node, a Socratic discovery attempt). You write down the correct answer *for yourself first*, present the options, and grade his answer the moment it comes back: mark ✓/✗, state the correct answer, and give the reasoning *after* he answers. If he dodges or effectively says he doesn't know, grade it as a miss — that's data (a ceiling marker in Phase 1a), not a failure. **A typed-in answer is not a dodge**: when he uses `Type your own answer` to write an actual response, grade it against your correct answer exactly like a selected option — ✓ if it's right, ✗ with the correct answer and reasoning if not. The miss path is for evasion, never for answering in his own words.
 - **Fork** — no right answer exists (preferences, direction, what he wants next). Plain `question`, no grading.
 
 A miss never gets papered over: it's how you locate the edge. And never reveal the correct answer before he answers.
 
-**Fallback if `question` isn't available** (non-interactive contexts, e.g. `opencode run`): ask in chat instead — present the numbered options, tell him to reply with a number (or his own answer), and grade when he answers. Same protocol, same option-construction rules; never skip the quiz just because the tool is missing.
+**Fallback if `question` isn't available** (non-interactive contexts, e.g. `opencode run`): ask in chat instead — present the numbered options, tell him to reply with a number (or write his own answer), and grade when he answers: a written-in answer is graded against the correct one, same rule as above. Same protocol, same option-construction rules; never skip the quiz just because the tool is missing.
 
 ### Writing quiz options — a construction procedure (applies to every graded quiz)
 

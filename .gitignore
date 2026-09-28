@@ -16,6 +16,8 @@ __pycache__/
 # Runtime state
 .memory/
 *.log
+
+# Private migration docs (not part of the repo)
 learn-opencode-proyecto.md
 learn-opencode-plan.md
 

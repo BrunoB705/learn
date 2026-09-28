@@ -1,0 +1,9 @@
+{
+  "name": "learn-opencode",
+  "private": true,
+  "dependencies": {
+    "@mermaid-js/mermaid-cli": "^11.0.0",
+    "@opencode-ai/plugin": "1.18.32",
+    "@resvg/resvg-js": "^2.6.0"
+  }
+}

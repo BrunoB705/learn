@@ -13,6 +13,7 @@ This tree is the **OpenCode port**: same methodology, OpenCode's agents/skills/c
 ```text
 learn/
 ├── opencode.json                 # project config: Obsidian MCP server
+├── AGENTS.md                     # global rules: language (Spanish), sources per topic
 ├── .opencode/
 │   ├── commands/teach.md         # /teach <topic>
 │   ├── skills/
@@ -23,14 +24,21 @@ learn/
 │   │   ├── svg-maker.md          # geometric/spatial diagrams
 │   │   └── mermaid-maker.md      # dependency graphs, flows, sequences, states
 │   ├── plugins/learn.ts          # write/edit/render_svg + write/edit/render_mermaid
-│   └── package.json              # @resvg/resvg-js + @mermaid-js/mermaid-cli
-└── legacy/pi/                    # the original pi config (skills, agents, extensions)
+│   ├── tools/image_test.ts       # smoke test: does the model really see the PNG?
+│   ├── package.json              # @resvg/resvg-js + @mermaid-js/mermaid-cli
+│   └── package-lock.json
+├── sources/
+│   └── index.md                  # topic → folder; the PDFs themselves stay out of git
+├── legacy/pi/                    # the original pi config (skills, agents, extensions)
+└── assets/                       # README thumbnail
 ```
 
+- `AGENTS.md` — the rules that apply to every session: reply in Spanish, teach only from the topic's own folder in `sources/`
 - `skills/teach/` — the philosophy and the process (probe → plan → teach → quiz, every session)
 - `skills/visualize/` — when a diagram helps, and how to get one that's actually correct
 - `sources/` — **his own study material, per topic** (`sources/index.md` maps topic → folder). Each session teaches *only* from the folder matching its topic; if nothing covers it, the tutor asks before touching the web. PDFs stay out of git.
 - `plugins/learn.ts` — the six visualization tools: the maker authors a source, renders it to a PNG, **looks at the PNG and iterates until it's right**, then publishes it into `<vault>/viz/`
+- `tools/image_test.ts` — render an SVG with a random token and hand it to the model, to prove the vision pipeline works before blaming a diagram
 - `agents/researcher` — fires before you teach from memory, to confirm facts and scope a topic
 
 Sessions, notes, quizzes results and diagrams live in your **Obsidian vault**, not in this repo.
@@ -98,8 +106,3 @@ Free models rotate; if one disappears, change the `model:` line.
 - Quizzes are graded by the tutor (prompt-level V1): the correct answer is written down first, you answer through OpenCode's `question` picker, and it grades with ✓/✗ + correct answer + explanation afterwards.
 - Don't put a `permission:` block in an agent's frontmatter — on OpenCode's free tier it breaks every call from that subagent.
 - The teaching skill is written for one learner (me). Edit the skill to fit how you learn best.
-
-## Docs
-
-- `learn-opencode-proyecto.md` — what the project is and why it was ported
-- `learn-opencode-plan.md` — the migration plan, its technical findings and stage status

@@ -89,8 +89,9 @@ Knowledge outlives the session. The Obsidian MCP server gives you direct read/wr
 How to use them every session:
 
 - **Before Phase 1, search the vault for prior notes** on the topic and its prerequisites (`obsidian_search_vault`, then read what's relevant). This tells you what he's already studied, how it was explained before, and where past quizzes broke down — feed that into your probe and your plan, and link the new lesson to what's already there.
-- **Maintain a session note** in the vault (e.g. `Sessions/<date> - <topic>.md`): the dependency map (mermaid), each node as you establish it, the quizzes asked and his results. Create it once he okays the plan; update it as you teach.
-- **Link concepts with `[[wikilinks]]`** to prior notes — the vault's graph mirrors the dependency graph you're building in his head.
+- **One permanent note per concept** (`Conceptos/<concepto>.md`) — this is the layer the graph is actually for. Create/update it the moment a node is established: what it is, why it exists, the quiz that confirmed it, links to what it depends on (`[[...]]`) . Session notes are a **log**; concept notes are the **knowledge**. When two concept notes link to each other along a dependency edge, Obsidian's graph draws the DAG for you.
+- **Maintain a session note** in the vault (e.g. `Sessions/<date> - <topic>.md`): the dependency map (mermaid), each node as you establish it, quizzes asked and his results, and the closing block. Create it once he okays the plan; update it as you teach. **Link it to every concept note it touched** — one `[[concepto]]` per established node.
+- **Link concepts with `[[wikilinks]]`** to prior notes — the vault's graph mirrors the dependency graph you're building in his head. Never leave the session note as an island: a note with zero wikilinks is invisible to the graph.
 - **Embed diagrams** with `![[viz-....png|500]]` once a visualization has been published to `<vault>/viz/`.
 - **Record quiz results** (question, his answer, the correct answer) so a future session starts knowing his level instead of re-probing from zero.
 
@@ -179,6 +180,23 @@ For **every node** (each unconditional truth *and* each non-trivial reasoning st
 Repeat this full loop per node — don't front-load all the foundations once at the start and then stop checking. Any time a new unconditional truth is needed mid-session, it goes through motivate → establish → connect → quiz-check just like a derived step would.
 
 If you catch yourself asserting a fact he'd have to take on faith — foundational or not — stop: either motivate it and confirm it lands, or ground it in something already established. Unmotivated, unconfirmed facts don't lock in — that's the whole point.
+
+## Closing the session — when it ends
+
+Say this out loud at the start of Phase 3, so "done" is never vague: **the session ends when he can produce the goal back** — the thing he asked for in Phase 1b ("explicármelo a otro", "resolver este tipo de problema"). Until then, keep walking the map node by node.
+
+It closes on exactly one of these three, and **you must always name which one happened** — never trail off, never leave it hanging on an unanswered "¿seguimos?":
+
+1. **Goal achieved** — the normal ending. He explains it back (or solves it) and it grades ✓ → run the close protocol.
+2. **He says stop** — tired, out of time, wants to bail. Stop cleanly at any point; a session cut short is fine, an abandoned one is not.
+3. **Blocked on the map** — the next node needs something outside this session: another topic's material, a gap in `sources/`, or a prerequisite he isn't ready for. Say which node and why, then close.
+
+### The close protocol (runs on every close, including an early stop)
+
+1. **Review quiz** — 3–5 graded questions over *everything established this session*, not just the last node. Same option-construction procedure as any other quiz; same rules: correct answer written down first, grade after he answers.
+2. **Grade and record** — each ✓/✗ into the session note, plus a `## Cierre` block: what's solid, what's weak (the misses, with the correct answer), and **the one thing to pick up next session**.
+3. **Update the concept notes** so the graph reflects where he actually ended, not where the session started.
+4. **Say it's closed** — end with an explicit line: *"Sesión cerrada. Lo siguiente: X."*
 
 ## Formatting — math renders as LaTeX
 

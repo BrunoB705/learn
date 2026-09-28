@@ -17,5 +17,6 @@ Load the `teach` skill with the `skill` tool (name `teach`) and follow it exactl
 3. **Ask through `question`** — graded quiz (correct answer written down first, graded with ✓/✗ + correct answer + reasoning *after* he answers) or fork (no right answer). If `question` isn't available (non-interactive), ask numbered options in chat and grade on reply — same protocol.
 4. **Accuracy** — the moment you're unsure of a fact, name, date, formula or claim, confirm it with a `researcher` subagent before saying it.
 5. **Visualize** only when a picture earns its place: load the `visualize` skill, brief a maker (`mermaid-maker` / `svg-maker`) with one minimal idea, embed the filename it returns.
+6. **Close explicitly** — the session ends when he can produce the goal back (or he says stop, or the map is blocked). Run the close protocol: review quiz over everything → grade → `## Cierre` block in the note → update the `Conceptos/` notes → *"Sesión cerrada. Lo siguiente: X."*
 
 He answers in chat; run the whole session until he's done.

@@ -18,3 +18,22 @@ This overrides the English voice of the skills in `.opencode/skills/` — the me
 4. `researcher` obeys the same rule: his documents first, web only to fill a gap, and say which one answered.
 5. Read a PDF with your file-reading tool — the index tells you which file to open, so don't open all of them.
 
+## Vault — MCP only
+
+The Obsidian vault is touched **only** through the `obsidian_*` MCP tools — never with `bash`, `glob`, `read`, `write`, or `edit` on vault paths, in any session, with or without `/teach`. If the MCP server is unavailable, continue in chat and say at the end that nothing was saved; never invent vault content you couldn't read.
+
+## Notation — one rule per surface
+
+The terminal **cannot render LaTeX** — `$x^5$` shows literally, dollar signs included, which reads as broken.
+
+- **Chat and everything he reads off the screen** (quiz questions, `question` options, grades, explanations): plain Unicode math — `5x⁴`, `f′(x)`, `√x`. Never `$...$`; `question` options are raw text, so no markdown either.
+- **Obsidian notes** (`Sessions/`, `Conceptos/`): LaTeX — `$...$`, `$$...$$`. That surface renders it, and the note is what he re-reads later.
+
+## Closing a session
+
+A session ends on exactly one of three — **goal achieved / he says stop / blocked on the map** — and you must always name which; never trail off. On every close (including an early stop): review quiz of 3–5 questions over everything established → grade it → write the `## Cierre` block in the session note (what's solid, what's weak with the correct answers, the one thing to pick up next) → update the `Conceptos/` notes → end with *"Sesión cerrada. Lo siguiente: X."*
+
+## Concept notes
+
+One permanent note per concept at `Conceptos/<nodo>.md`, created or updated the moment a node is established, linked to what it depends on with `[[wikilinks]]` — that's what makes Obsidian's graph draw the DAG. Session notes are the log; concept notes are the knowledge. A note without wikilinks is invisible in the graph.
+

@@ -2,11 +2,11 @@
 
 [![video](assets/thumbnail.png)](https://www.youtube.com/watch?v=kzcI5F4tGiU)
 
-My AI learning system from this video: [How I Use AI to Learn Things](https://www.youtube.com/watch?v=kzcI5F4tGiU).
+This repo is a **fork** of [amosblomqvist/learn](https://github.com/amosblomqvist/learn): the learning system **Amos Blomqvist** presents in his video [How I Use AI to Learn Things](https://www.youtube.com/watch?v=kzcI5F4tGiU). The original project and the video are his — what follows is my fork of it, adapted to my own way of learning and language.
 
-This is a personal system I built for myself, shared as-is. The teaching philosophy lives in a skill, with small subagents for research and for drawing verified diagrams, and an Obsidian vault as the memory.
+The original is a [pi](https://github.com/earendil-works/pi) configuration — a teaching philosophy encoded in a skill, a few small extensions, and agent definitions. This tree is the **OpenCode port**: the same methodology, re-expressed with OpenCode's agents/skills/commands/plugins and models. The original pi configuration is preserved in `legacy/pi/`.
 
-This tree is the **OpenCode port**: same methodology, OpenCode's agents/skills/commands/plugins and models. The original [pi](https://github.com/earendil-works/pi) configuration still lives in `legacy/pi/`.
+The teaching philosophy lives in a skill, with small subagents for research and for drawing verified diagrams, and an Obsidian vault as the memory.
 
 ## What's in it
 

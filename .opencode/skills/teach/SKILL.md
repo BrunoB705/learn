@@ -112,6 +112,8 @@ Everything you ask him goes through the native `question` tool. Two modes:
 
 Neither a miss nor a `?` gets papered over: together they're how you locate the edge. And never reveal the correct answer before he answers.
 
+**Multi-select** (the `question` tool with `multiple: true` — only when the question genuinely has several right answers): grade it as an **exact set** — ✓ only if he selects every correct option and no incorrect one; otherwise ✗, and the reasoning should name which correct options he missed. The typed-in and `?` rules apply unchanged.
+
 **Fallback if `question` isn't available** (non-interactive contexts, e.g. `opencode run`): ask in chat instead — present the numbered options, tell him to reply with a number (or write his own answer), and grade when he answers: a written-in answer is graded against the correct one, same rule as above. Same protocol, same option-construction rules; never skip the quiz just because the tool is missing.
 
 ### Writing quiz options — a construction procedure (applies to every graded quiz)

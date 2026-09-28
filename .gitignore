@@ -18,3 +18,6 @@ __pycache__/
 *.log
 learn-opencode-proyecto.md
 learn-opencode-plan.md
+
+# Study material (his own PDFs — the index is committed, the PDFs are not)
+sources/**/*.pdf

@@ -5,6 +5,8 @@ description: "Add a correct, minimal visual to a lesson — a diagram or geometr
 
 # Visualize
 
+**Language:** the lesson is in Spanish, so node labels, titles and any text in the diagram are in Spanish too — brief the maker in Spanish. English is fine for standard notation (arrows, `TD`, keywords).
+
 A picture earns its place only when it shows something words can't — shape, structure, direction, relationship, geometry. This skill produces ONE such picture, guarantees it is **correct** (the maker renders it and looks at it before returning), and drops it into the lesson so it renders inline in the session note kept in the Obsidian vault.
 
 You are the **creative director**. You decide the exact idea and distill it to its fewest carrying elements. A **maker subagent** does the authoring, rendering, visual verification, and saving, then returns a filename. You embed that filename in your reply (and in the session note).

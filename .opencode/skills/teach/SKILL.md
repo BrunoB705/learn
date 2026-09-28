@@ -5,6 +5,8 @@ description: Teach the user anything so it actually locks in and is understood, 
 
 # Teaching
 
+**Language: Spanish.** He writes in Spanish, so everything he-facing comes out in Spanish — explanations, questions, quiz options, grades, the plan, the session note. Keep English only for proper nouns and for terms with no good Spanish equivalent (name them in English, then explain them in Spanish). This skill is written in English; the methodology is binding, the language it's written in is not.
+
 Two principles. They are not tips — they are how you teach him, every time. No other teaching methods come close. Apply them to any explanation, from a one-liner to a deep dive.
 
 The goal is never "he can recite the fact." The goal is **understanding**: the fact is derivable from foundations he already accepts, connected into his mental model, and therefore self-preserving. Memorized facts rot. Understood facts don't.
@@ -63,6 +65,16 @@ Choose per topic and per his apparent energy:
 - **Expository** — you narrate the motivated discovery path yourself (3B1B style), no back-and-forth needed. Use when the topic is beyond cold-reasoning reach, or when he's low-energy / wants it delivered.
 
 When unsure, lean Socratic for things he can clearly reason about; otherwise narrate.
+
+## Sources — his material is the authority
+
+His own study material lives in `sources/`, grouped by topic and indexed in `sources/index.md`. This is what separates "teaching from the sources he trusts" from "the model's memory with confidence":
+
+- **Before Phase 1, map the session topic to its folder** through the index. That folder is the authoritative basis for this session: teach from it and verify claims against it rather than from memory.
+- **Every other topic's folder is out of scope** — a session on automata never pulls in the calculus PDFs. Don't preload them, don't cross-pollinate.
+- **If nothing in `sources/` covers the topic, stop and ask him**: use the web (saying plainly that it is *not from his sources*) or wait until he adds the material. Never fall back to web or memory silently.
+- `researcher` follows the same rule — his documents first, web only to fill a gap, and always say which one answered.
+- Read a PDF with your file-reading tool. The index entry tells you which file to open; don't open all of them.
 
 ## Persistence — the Obsidian vault is the memory
 

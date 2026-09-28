@@ -29,6 +29,7 @@ learn/
 
 - `skills/teach/` — the philosophy and the process (probe → plan → teach → quiz, every session)
 - `skills/visualize/` — when a diagram helps, and how to get one that's actually correct
+- `sources/` — **his own study material, per topic** (`sources/index.md` maps topic → folder). Each session teaches *only* from the folder matching its topic; if nothing covers it, the tutor asks before touching the web. PDFs stay out of git.
 - `plugins/learn.ts` — the six visualization tools: the maker authors a source, renders it to a PNG, **looks at the PNG and iterates until it's right**, then publishes it into `<vault>/viz/`
 - `agents/researcher` — fires before you teach from memory, to confirm facts and scope a topic
 

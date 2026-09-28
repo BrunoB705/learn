@@ -6,6 +6,8 @@ Start a learning session on this topic:
 
 **$ARGUMENTS**
 
+**Language: Spanish** — he writes in Spanish, so teach, ask, quiz, grade and write the session note in Spanish (`AGENTS.md` + the teach skill say the same thing).
+
 If `$ARGUMENTS` is empty, first ask what he wants to learn today, then continue.
 
 Load the `teach` skill with the `skill` tool (name `teach`) and follow it exactly. Everything in it is binding for this session, in particular:

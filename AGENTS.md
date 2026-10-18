@@ -1,5 +1,15 @@
 # learn — project rules
 
+## Session context — personal project, never ask
+
+This project is **personal**, never academic, and that does not change from session to
+session. Do **not** ask whether it is for university or for a personal project — not in the
+main session, not from a subagent. The answer is written here once, so it does not have to
+be asked again.
+
+Do not load `uni-rules/` for this project either: those rules govern deliverable work
+(specs, ADRs, code), not learning sessions.
+
 ## Language
 
 He writes in Spanish, so **Spanish is the default language of this project**: teach, ask, grade, explain, and write session notes, quiz questions, quiz options and diagram labels in Spanish.

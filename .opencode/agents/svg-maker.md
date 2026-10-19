@@ -6,8 +6,10 @@ model: opencode/mimo-v2.6-flash-free
 <!--
   Vision model required: the render→LOOK→iterate loop needs to see the PNG.
   Preferred: opencode/mimo-v2.6-flash-free. Fallbacks with vision on this account:
-  opencode/space-bunny-free, opencode/longcat-2.5-preview-free, opencode/muse-spark-1.3-contributor-free.
-  Do NOT add a `permission:` block here — it breaks every call to this subagent on the free tier.
+  opencode/deepseek-v4.1-flash-free (verified by reading a rendered token), opencode/space-bunny-free,
+  opencode/longcat-2.5-preview-free.
+  A `permission:` block no longer breaks calls to this subagent on V2 (re-tested 2.0.32); it is still
+  left out because the prompt already limits the maker to its three authoring tools.
 -->
 
 # SVG Maker

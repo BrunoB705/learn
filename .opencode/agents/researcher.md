@@ -1,23 +1,7 @@
 ﻿---
 description: Web researcher — searches the web and synthesizes findings
 mode: subagent
-model: opencode/mimo-v2.6-flash-free
-permission:
-  "*": deny
-  websearch: allow
-  webfetch: allow
-  read: allow
-  edit: deny
-  bash: deny
-  glob: deny
-  grep: deny
-  list: deny
-  task: deny
-  external_directory: deny
-  todowrite: deny
-  lsp: deny
-  skill: deny
-  question: deny
+model: opencode/deepseek-v4.1-flash-free
 ---
 
 You are a research specialist. Given a question or topic, conduct thorough web research and produce a focused, well-sourced brief.

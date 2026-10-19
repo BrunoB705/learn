@@ -1,5 +1,4 @@
-import type { Plugin } from "@opencode-ai/plugin"
-import { tool } from "@opencode-ai/plugin"
+import { Plugin } from "@opencode/plugin"
 import { Resvg } from "@resvg/resvg-js"
 import { spawn } from "node:child_process"
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
@@ -15,11 +14,20 @@ import { join } from "node:path"
  *
  * Each maker owns one managed source file under %TEMP%/opencode-learn/<group>-<sessionID>/,
  * keyed by sessionID so parallel makers never collide. Previews return the PNG as
- * an attachment (the maker LOOKS at it); with `save_as` the PNG is published into
+ * file content (the maker LOOKS at it); with `save_as` the PNG is published into
  * <vault>/viz/ with a unique filename.
  *
  * Rendering: SVG via @resvg/resvg-js (native, no system binaries), Mermaid via
  * @mermaid-js/mermaid-cli + puppeteer pointed at an installed Chrome/Edge.
+ *
+ * OpenCode V2 shape: a default-exported `Plugin.define({ id, setup })`, tools
+ * registered through `ctx.tool.transform`. Known-V1 differences that matter here:
+ *   - the project directory is no longer on the tool context; it comes from
+ *     `ctx.location.directory` at setup time and is closed over.
+ *   - a tool's arguments are declared as JSON Schema (`input`), not as `args`.
+ *   - the result is `{ content }`, where content is a string or content parts;
+ *     an image travels as `{ type: "file", uri: <data-uri>, mime, name }`
+ *     (V1's `attachments: [{ url, filename }]` no longer exists).
  */
 
 const STAGING_ROOT = join(tmpdir(), "opencode-learn")
@@ -41,6 +49,28 @@ const BROWSER_CANDIDATES = [
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
   "/Applications/Chromium.app/Contents/MacOS/Chromium",
 ].filter((p): p is string => Boolean(p))
+
+/**
+ * Minimal local mirrors of the V2 tool types. The plugin deliberately depends
+ * only on `@opencode/plugin`: importing `@opencode/schema/tool` for the real
+ * `Tool.*` types would add an undeclared transitive dependency for no runtime
+ * benefit. These are structurally identical to `Tool.Content` / `Tool.Result`.
+ */
+type Content = { type: "text"; text: string } | { type: "file"; uri: string; mime: string; name?: string }
+
+type Result = { content: string | Content[] }
+
+/** The subset of `ToolContext` these tools use; the session keys the staging dir. */
+type ExecuteContext = { readonly sessionID: string }
+
+/** Tool definition shape taken by `editor.add(...)`. */
+type ToolDefinition = {
+  readonly name: string
+  readonly description: string
+  readonly input: unknown
+  readonly options: { readonly codemode: false }
+  readonly execute: (input: never, context: ExecuteContext) => Promise<Result>
+}
 
 function findFirst(paths: string[]): string | undefined {
   for (const p of paths) {
@@ -172,6 +202,10 @@ async function renderMermaid(bodyPath: string, workDir: string, outPath: string,
   return { ok: true as const, detail: "" }
 }
 
+function imageContent(png: Buffer, name: string): Content {
+  return { type: "file", uri: `data:image/png;base64,${png.toString("base64")}`, mime: "image/png", name }
+}
+
 function renderResult(opts: {
   ok: boolean
   kind: "SVG" | "Mermaid"
@@ -181,9 +215,13 @@ function renderResult(opts: {
   editTool: string
   publishHint: string
   previewHint: string
-}): string | { title: string; output: string; attachments: Array<{ type: "file"; mime: string; url: string; filename?: string }> } {
+}): Result {
   if (!opts.ok) {
-    return `${opts.kind} render FAILED — no image produced. Fix the source with ${opts.editTool} and render again.\n\nError:\n${opts.detail}`
+    return {
+      content:
+        `${opts.kind} render FAILED — no image produced. Fix the source with ${opts.editTool} and render again.` +
+        `\n\nError:\n${opts.detail}`,
+    }
   }
   const png = opts.png!
   if (opts.saveAs) {
@@ -191,104 +229,155 @@ function renderResult(opts: {
     try {
       published = publish(png, opts.saveAs)
     } catch (err) {
-      return `${opts.kind} rendered, but publishing FAILED: ${err instanceof Error ? err.message : String(err)}`
+      return { content: `${opts.kind} rendered, but publishing FAILED: ${err instanceof Error ? err.message : String(err)}` }
     }
     return {
-      title: `Published ${published.filename}`,
-      output: `Published to <vault>/viz/.\nfilename: ${published.filename}\npublish_path: ${published.path}\n\n${opts.publishHint}`,
-      attachments: [{ type: "file", mime: "image/png", url: `data:image/png;base64,${png.toString("base64")}` }],
+      content: [
+        {
+          type: "text",
+          text:
+            `Published to <vault>/viz/.\nfilename: ${published.filename}\npublish_path: ${published.path}\n\n` +
+            opts.publishHint,
+        },
+        imageContent(png, published.filename),
+      ],
     }
   }
-  return {
-    title: `${opts.kind} preview`,
-    output: opts.previewHint,
-    attachments: [{ type: "file", mime: "image/png", url: `data:image/png;base64,${png.toString("base64")}` }],
-  }
+  return { content: [{ type: "text", text: opts.previewHint }, imageContent(png, `${opts.kind.toLowerCase()}-preview.png`)] }
 }
 
 type SourceArgs = { source: string }
 type EditArgs = { old_text: string; new_text: string }
 type RenderArgs = { save_as?: string }
 
-function writeTool(group: string, bodyFile: string, kind: "SVG" | "Mermaid", editTool: string, renderTool: string) {
-  return tool({
+/**
+ * `input` is declared as JSON Schema, so the executor receives `unknown`; the
+ * runtime validates the payload against the schema before the call, which is
+ * what makes the cast to the argument type sound.
+ */
+function asArgs<T>(input: unknown): T {
+  return input as T
+}
+
+function writeTool(
+  group: string,
+  bodyFile: string,
+  kind: "SVG" | "Mermaid",
+  editToolName: string,
+  renderToolName: string,
+): ToolDefinition {
+  const name = group === "svg" ? "write_svg" : "write_mermaid"
+  return {
+    name,
     description:
       `Write the FULL ${kind} source to this session's managed file (your first draft or a complete ` +
-      `rewrite). You do NOT name the file — ${editTool} and ${renderTool} act on the same one. ` +
-      `Writing does NOT render — call ${renderTool} when ready. For a small fix, prefer ${editTool}.`,
-    args: {
-      source: tool.schema
-        .string()
-        .describe(
-          kind === "SVG"
-            ? "The complete <svg>…</svg> document, with explicit width/height (or viewBox) and readable font sizes."
-            : "The complete Mermaid diagram source, starting with the diagram type (e.g. `graph TD`).",
-        ),
+      `rewrite). You do NOT name the file — ${editToolName} and ${renderToolName} act on the same one. ` +
+      `Writing does NOT render — call ${renderToolName} when ready. For a small fix, prefer ${editToolName}.`,
+    input: {
+      type: "object",
+      properties: {
+        source: {
+          type: "string",
+          description:
+            kind === "SVG"
+              ? "The complete <svg>…</svg> document, with explicit width/height (or viewBox) and readable font sizes."
+              : "The complete Mermaid diagram source, starting with the diagram type (e.g. `graph TD`).",
+        },
+      },
+      required: ["source"],
+      additionalProperties: false,
     },
-    async execute(args: SourceArgs, context) {
-      const source = args.source.trim()
-      if (!source) throw new Error(`\`${group === "svg" ? "write_svg" : "write_mermaid"}\` requires a non-empty \`source\`.`)
+    options: { codemode: false },
+    async execute(input, context) {
+      const source = asArgs<SourceArgs>(input).source.trim()
+      if (!source) throw new Error(`\`${name}\` requires a non-empty \`source\`.`)
       if (kind === "SVG" && !source.includes("<svg")) {
-        return "Source must be a complete <svg>…</svg> document."
+        return { content: "Source must be a complete <svg>…</svg> document." }
       }
       const dir = stagingDir(group, context.sessionID)
       mkdirSync(dir, { recursive: true })
       const bodyPath = join(dir, bodyFile)
       writeFileSync(bodyPath, source, "utf8")
       const lines = source.split("\n").length
-      return `Wrote ${lines}-line ${kind} source.\nCall ${renderTool} to render it, or ${editTool} to tweak it.`
+      return {
+        content: `Wrote ${lines}-line ${kind} source.\nCall ${renderToolName} to render it, or ${editToolName} to tweak it.`,
+      }
     },
-  })
+  }
 }
 
-function editTool(group: string, bodyFile: string, kind: "SVG" | "Mermaid", writeToolName: string, renderTool: string) {
-  return tool({
+function editTool(
+  group: string,
+  bodyFile: string,
+  kind: "SVG" | "Mermaid",
+  writeToolName: string,
+  renderToolName: string,
+): ToolDefinition {
+  const name = group === "svg" ? "edit_svg" : "edit_mermaid"
+  return {
+    name,
     description:
       `Make a single exact-match replacement in this session's ${kind} source — same contract as the ` +
       `\`edit\` tool, locked to the one managed file. \`old_text\` must appear EXACTLY ONCE (include ` +
       `surrounding context for uniqueness); on 0 or >1 matches the call fails and nothing changes. ` +
       `Call ${writeToolName} first. Editing does NOT render.`,
-    args: {
-      old_text: tool.schema.string().describe("Exact substring of the current source to replace (must match once)."),
-      new_text: tool.schema.string().describe("Replacement text for `old_text`."),
+    input: {
+      type: "object",
+      properties: {
+        old_text: { type: "string", description: "Exact substring of the current source to replace (must match once)." },
+        new_text: { type: "string", description: "Replacement text for `old_text`." },
+      },
+      required: ["old_text", "new_text"],
+      additionalProperties: false,
     },
-    async execute(args: EditArgs, context) {
+    options: { codemode: false },
+    async execute(input, context) {
+      const args = asArgs<EditArgs>(input)
       const bodyPath = bodyPathOf(group, context.sessionID, bodyFile)
-      if (!existsSync(bodyPath)) return `No source yet — call ${writeToolName} first.`
+      if (!existsSync(bodyPath)) return { content: `No source yet — call ${writeToolName} first.` }
       const current = readFileSync(bodyPath, "utf8")
       let updated: string
       let index: number
       try {
         ;({ updated, index } = applyEdit(current, args.old_text, args.new_text))
       } catch (err) {
-        return err instanceof Error ? err.message : String(err)
+        return { content: err instanceof Error ? err.message : String(err) }
       }
       writeFileSync(bodyPath, updated, "utf8")
-      return `Applied edit. Updated region:\n\`\`\`\n${snippetAround(updated, index)}\n\`\`\`\nCall ${renderTool} to see it.`
+      return {
+        content: `Applied edit. Updated region:\n\`\`\`\n${snippetAround(updated, index)}\n\`\`\`\nCall ${renderToolName} to see it.`,
+      }
     },
-  })
+  }
 }
 
-function svgRenderTool() {
-  return tool({
+function svgRenderTool(): ToolDefinition {
+  return {
+    name: "render_svg",
     description:
       "Render the CURRENT session SVG source to a PNG and return it inline so you can SEE the picture " +
       "and iterate. You do NOT pass the source here — it comes from the managed file; call write_svg " +
       "first. Iterate freely with no `save_as` (preview only). When the picture is correct and clean, " +
       "call once more with `save_as` set to a short kebab-case topic slug: that publishes the PNG into " +
       "<vault>/viz as viz-<slug>-<timestamp>.png and returns the filename to embed.",
-    args: {
-      save_as: tool.schema
-        .string()
-        .optional()
-        .describe(
-          "Short kebab-case topic slug (e.g. 'number-line'). When set, the PNG is published to " +
+    input: {
+      type: "object",
+      properties: {
+        save_as: {
+          type: "string",
+          description:
+            "Short kebab-case topic slug (e.g. 'number-line'). When set, the PNG is published to " +
             "<vault>/viz as viz-<slug>-<timestamp>.png. Omit for a preview-only render.",
-        ),
+        },
+      },
+      required: [],
+      additionalProperties: false,
     },
-    async execute(args: RenderArgs, context) {
+    options: { codemode: false },
+    async execute(input, context) {
+      const args = asArgs<RenderArgs>(input)
       const bodyPath = bodyPathOf("svg", context.sessionID, "diagram.svg")
-      if (!existsSync(bodyPath)) return "No source yet — call write_svg first."
+      if (!existsSync(bodyPath)) return { content: "No source yet — call write_svg first." }
       let png: Buffer
       try {
         png = renderSvg(readFileSync(bodyPath, "utf8"))
@@ -300,7 +389,7 @@ function svgRenderTool() {
           editTool: "edit_svg",
           publishHint: "",
           previewHint: "",
-        }) as string
+        })
       }
       return renderResult({
         ok: true,
@@ -313,34 +402,41 @@ function svgRenderTool() {
           "Preview render (not yet saved). LOOK: are coordinates, angles, directions, and proportions correct? Labels clear and unclipped? Fix with edit_svg, or re-render with `save_as` to publish.",
       })
     },
-  })
+  }
 }
 
-function mermaidRenderTool() {
-  return tool({
+function mermaidRenderTool(projectDir: string): ToolDefinition {
+  return {
+    name: "render_mermaid",
     description:
       "Render the CURRENT session Mermaid source to a PNG and return it inline so you can SEE the " +
       "diagram and iterate. You do NOT pass the source here — it comes from the managed file; call " +
       "write_mermaid first. Iterate freely with no `save_as` (preview only). When the diagram is " +
       "correct and clean, call once more with `save_as` set to a short kebab-case topic slug: that " +
       "publishes the PNG into <vault>/viz as viz-<slug>-<timestamp>.png and returns the filename to embed.",
-    args: {
-      save_as: tool.schema
-        .string()
-        .optional()
-        .describe(
-          "Short kebab-case topic slug (e.g. 'internet-packets'). When set, the PNG is published to " +
+    input: {
+      type: "object",
+      properties: {
+        save_as: {
+          type: "string",
+          description:
+            "Short kebab-case topic slug (e.g. 'internet-packets'). When set, the PNG is published to " +
             "<vault>/viz as viz-<slug>-<timestamp>.png. Omit for a preview-only render.",
-        ),
+        },
+      },
+      required: [],
+      additionalProperties: false,
     },
-    async execute(args: RenderArgs, context) {
+    options: { codemode: false },
+    async execute(input, context) {
+      const args = asArgs<RenderArgs>(input)
       const dir = stagingDir("mermaid", context.sessionID)
       const bodyPath = bodyPathOf("mermaid", context.sessionID, "diagram.mmd")
-      if (!existsSync(bodyPath)) return "No source yet — call write_mermaid first."
+      if (!existsSync(bodyPath)) return { content: "No source yet — call write_mermaid first." }
       mkdirSync(dir, { recursive: true })
       const outPath = join(dir, `render-${Date.now()}.png`)
 
-      const result = await renderMermaid(bodyPath, dir, outPath, context.directory)
+      const result = await renderMermaid(bodyPath, dir, outPath, projectDir)
       if (!result.ok) {
         return renderResult({
           ok: false,
@@ -349,7 +445,7 @@ function mermaidRenderTool() {
           editTool: "edit_mermaid",
           publishHint: "",
           previewHint: "",
-        }) as string
+        })
       }
       return renderResult({
         ok: true,
@@ -362,18 +458,20 @@ function mermaidRenderTool() {
           "Preview render (not yet saved). LOOK: are arrows/relationships correct, labels right, nothing cramped? Fix with edit_mermaid, or re-render with `save_as` to publish.",
       })
     },
-  })
-}
-
-export const LearnPlugin: Plugin = async () => {
-  return {
-    tool: {
-      write_svg: writeTool("svg", "diagram.svg", "SVG", "edit_svg", "render_svg"),
-      edit_svg: editTool("svg", "diagram.svg", "SVG", "write_svg", "render_svg"),
-      render_svg: svgRenderTool(),
-      write_mermaid: writeTool("mermaid", "diagram.mmd", "Mermaid", "edit_mermaid", "render_mermaid"),
-      edit_mermaid: editTool("mermaid", "diagram.mmd", "Mermaid", "write_mermaid", "render_mermaid"),
-      render_mermaid: mermaidRenderTool(),
-    },
   }
 }
+
+export default Plugin.define({
+  id: "learn",
+  async setup(ctx) {
+    const projectDir = ctx.location.directory
+    await ctx.tool.transform((editor) => {
+      editor.add(writeTool("svg", "diagram.svg", "SVG", "edit_svg", "render_svg"))
+      editor.add(editTool("svg", "diagram.svg", "SVG", "write_svg", "render_svg"))
+      editor.add(svgRenderTool())
+      editor.add(writeTool("mermaid", "diagram.mmd", "Mermaid", "edit_mermaid", "render_mermaid"))
+      editor.add(editTool("mermaid", "diagram.mmd", "Mermaid", "write_mermaid", "render_mermaid"))
+      editor.add(mermaidRenderTool(projectDir))
+    })
+  },
+})

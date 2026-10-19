@@ -24,8 +24,8 @@ learn/
 │   │   ├── svg-maker.md          # geometric/spatial diagrams
 │   │   └── mermaid-maker.md      # dependency graphs, flows, sequences, states
 │   ├── plugins/learn.ts          # write/edit/render_svg + write/edit/render_mermaid
-│   ├── tools/image_test.ts       # smoke test: does the model really see the PNG?
-│   ├── package.json              # @resvg/resvg-js + @mermaid-js/mermaid-cli
+│   ├── plugins/image-test.ts     # smoke test: does the model really see the PNG?
+│   ├── package.json              # @opencode/plugin + @resvg/resvg-js + @mermaid-js/mermaid-cli
 │   └── package-lock.json
 ├── sources/
 │   └── index.md                  # topic → folder; the PDFs themselves stay out of git
@@ -37,7 +37,7 @@ learn/
 - `skills/visualize/` — when a diagram helps, and how to get one that's actually correct
 - `sources/` — **his own study material, per topic** (`sources/index.md` maps topic → folder). Each session teaches *only* from the folder matching its topic; if nothing covers it, the tutor asks before touching the web. PDFs stay out of git.
 - `plugins/learn.ts` — the six visualization tools: the maker authors a source, renders it to a PNG, **looks at the PNG and iterates until it's right**, then publishes it into `<vault>/viz/`
-- `tools/image_test.ts` — render an SVG with a random token and hand it to the model, to prove the vision pipeline works before blaming a diagram
+- `plugins/image-test.ts` — render an SVG with a random token and hand it to the model, to prove the vision pipeline works before blaming a diagram
 - `agents/researcher` — fires before you teach from memory, to confirm facts and scope a topic
 
 Sessions, notes, quizzes results and diagrams live in your **Obsidian vault**, not in this repo.
@@ -61,7 +61,7 @@ cd .opencode && npm install
 
 ## Requirements
 
-- [OpenCode](https://opencode.ai/docs/) 1.18.x
+- [OpenCode](https://opencode.ai/v2/docs/) 2.0.x
 - **Node.js** — renders Mermaid via the bundled `@mermaid-js/mermaid-cli`
 - **Chrome or Edge** — used by puppeteer to render diagrams (overridable with `OPENCODE_CHROME`)
 - **Obsidian** with a vault — this is where the system remembers anything
@@ -92,16 +92,16 @@ It also teaches on plain prompts (the skill is auto-discovered), but `/teach <to
 | Role | Model | Why |
 |---|---|---|
 | Makers (`svg-maker`, `mermaid-maker`) | `opencode/mimo-v2.6-flash-free` | free **and** has vision — they must look at the PNG they rendered |
-| `researcher` | `opencode/mimo-v2.6-flash-free` | free, web tools |
+| `researcher` | `opencode/deepseek-v4.1-flash-free` | best of the free models on a head-to-head brief: most findings, 0 tool errors, and it checked the IANA registry and the RFC errata instead of trusting the citation |
 | Tutor | whatever your session uses | — |
 
-Fallbacks with vision (edit the `model:` line in the agent file): `space-bunny-free`, `longcat-2.5-preview-free`, `muse-spark-1.3-contributor-free`.
+Fallbacks with vision (edit the `model:` line in the agent file): `deepseek-v4.1-flash-free` (verified by reading a rendered token), `space-bunny-free`, `longcat-2.5-preview-free`.
 
 Free models rotate; if one disappears, change the `model:` line.
 
 ## Notes
 
 - You can run the system without subagents. The main session does the teaching; you just lose the researcher (truth verification) and the generated visuals.
-- Quizzes are graded by the tutor (prompt-level V1): the correct answer is written down first, you answer through OpenCode's `question` picker, and it grades with ✓/✗ + correct answer + explanation afterwards.
-- Don't put a `permission:` block in an agent's frontmatter — on OpenCode's free tier it breaks every call from that subagent.
+- Quizzes are graded by the tutor (prompt-level, no plugin): the correct answer is written down first, you answer through OpenCode's `question` picker, and it grades with ✓/✗ + correct answer + explanation afterwards.
+- A `permission:` block in an agent's frontmatter used to break every call from that subagent on the free tier. Re-tested on V2 (2.0.32) with and without the block: identical behaviour, so it no longer reproduces. V2's native shape is a `permissions:` array; these agents assert nothing and rely on their prompt.
 - The teaching skill is written for one learner (me). Edit the skill to fit how you learn best.

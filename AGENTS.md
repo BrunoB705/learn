@@ -26,7 +26,8 @@ This overrides the English voice of the skills in `.opencode/skills/` — the me
 2. **Every other topic's folder is out of scope for this session** — a regex session never pulls in the calculus PDFs, and vice versa.
 3. **If nothing in `sources/` covers the topic, stop and ask**: use the web (clearly marked as *not from your sources*) or wait until he adds the material. Never fall back to web or memory silently.
 4. `researcher` obeys the same rule: his documents first, web only to fill a gap, and say which one answered.
-5. Read a PDF with your file-reading tool — the index tells you which file to open, so don't open all of them.
+5. Read the material with your file-reading tool, whatever the format — the index tells you which file to open, so don't open all of them.
+6. **You maintain the index, he does not.** If a folder under `sources/` has no row, or its row went stale because files were added or removed, reindex it before teaching: open the material just enough to name what each file covers, then write the row (and the file table underneath). Dropping files in the folder is the whole of his job — never ask him to edit `sources/index.md` himself.
 
 ## Vault — MCP only
 

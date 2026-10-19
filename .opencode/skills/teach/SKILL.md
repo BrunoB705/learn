@@ -75,6 +75,7 @@ His own study material lives in `sources/`, grouped by topic and indexed in `sou
 - **If nothing in `sources/` covers the topic, stop and ask him**: use the web (saying plainly that it is *not from his sources*) or wait until he adds the material. Never fall back to web or memory silently.
 - `researcher` follows the same rule — his documents first, web only to fill a gap, and always say which one answered.
 - Read the material with your file-reading tool, whatever the format. The index entry tells you which file to open; don't open all of them.
+- **You maintain the index, he does not.** If a folder under `sources/` has no row, or its row went stale because files were added or removed, reindex it before Phase 1: open the material just enough to name what each file covers, then write the row and the file table under it. Dropping files into the folder is the whole of his job — never ask him to edit `sources/index.md` himself.
 
 ## Persistence — the Obsidian vault is the memory
 

@@ -27,15 +27,15 @@ learn/
 │   ├── plugins/image-test.ts     # smoke test: does the model really see the PNG?
 │   ├── package.json              # @opencode/plugin + @resvg/resvg-js + @mermaid-js/mermaid-cli
 │   └── package-lock.json
-├── sources/
-│   └── index.md                  # topic → folder; the PDFs themselves stay out of git
+├── sources/                      # local only — nothing here is committed
+│   └── index.example.md          # template; copy it to index.md and fill it in
 └── assets/                       # README thumbnail
 ```
 
 - `AGENTS.md` — the rules that apply to every session: reply in Spanish, teach only from the topic's own folder in `sources/`
 - `skills/teach/` — the philosophy and the process (probe → plan → teach → quiz, every session)
 - `skills/visualize/` — when a diagram helps, and how to get one that's actually correct
-- `sources/` — **his own study material, per topic** (`sources/index.md` maps topic → folder). Each session teaches *only* from the folder matching its topic; if nothing covers it, the tutor asks before touching the web. PDFs stay out of git.
+- `sources/` — **his own study material, per topic** (`sources/index.md` maps topic → folder; it is local, created by copying `sources/index.example.md`). Each session teaches *only* from the folder matching its topic; if nothing covers it, the tutor asks before touching the web. Nothing under `sources/` is in git — no material of any type, no index either.
 - `plugins/learn.ts` — the six visualization tools: the maker authors a source, renders it to a PNG, **looks at the PNG and iterates until it's right**, then publishes it into `<vault>/viz/`
 - `plugins/image-test.ts` — render an SVG with a random token and hand it to the model, to prove the vision pipeline works before blaming a diagram
 - `agents/researcher` — fires before you teach from memory, to confirm facts and scope a topic

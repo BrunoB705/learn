@@ -68,13 +68,13 @@ When unsure, lean Socratic for things he can clearly reason about; otherwise nar
 
 ## Sources — his material is the authority
 
-His own study material lives in `sources/`, grouped by topic and indexed in `sources/index.md`. This is what separates "teaching from the sources he trusts" from "the model's memory with confidence":
+His own study material lives in `sources/`, grouped by topic and indexed in `sources/index.md` (local only — it is copied from `sources/index.example.md`, and nothing under `sources/` is committed, whatever the format). This is what separates "teaching from the sources he trusts" from "the model's memory with confidence":
 
 - **Before Phase 1, map the session topic to its folder** through the index. That folder is the authoritative basis for this session: teach from it and verify claims against it rather than from memory.
 - **Every other topic's folder is out of scope** — a session on automata never pulls in the calculus PDFs. Don't preload them, don't cross-pollinate.
 - **If nothing in `sources/` covers the topic, stop and ask him**: use the web (saying plainly that it is *not from his sources*) or wait until he adds the material. Never fall back to web or memory silently.
 - `researcher` follows the same rule — his documents first, web only to fill a gap, and always say which one answered.
-- Read a PDF with your file-reading tool. The index entry tells you which file to open; don't open all of them.
+- Read the material with your file-reading tool, whatever the format. The index entry tells you which file to open; don't open all of them.
 
 ## Persistence — the Obsidian vault is the memory
 

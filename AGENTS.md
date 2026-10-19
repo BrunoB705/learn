@@ -20,7 +20,7 @@ This overrides the English voice of the skills in `.opencode/skills/` — the me
 
 ## Sources — his material only
 
-`sources/` holds his own study material, grouped by topic, indexed in `sources/index.md`.
+`sources/` holds his own study material, grouped by topic, indexed in `sources/index.md`. The index is local: it is created by copying `sources/index.example.md`, and nothing under `sources/` is committed — no material of any format, and no index either.
 
 1. **Before teaching anything**, map the session topic to its folder using that index. That folder is the authoritative basis for this session: teach from it and verify claims against it instead of memory.
 2. **Every other topic's folder is out of scope for this session** — a regex session never pulls in the calculus PDFs, and vice versa.

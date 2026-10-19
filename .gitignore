@@ -21,5 +21,8 @@ __pycache__/
 learn-opencode-proyecto.md
 learn-opencode-plan.md
 
-# Study material (his own PDFs — the index is committed, the PDFs are not)
-sources/**/*.pdf
+# Study material — nothing under sources/ is committed: no file of any type,
+# and no index either. Only the template travels with the repo; copy it locally
+# to sources/index.md (see sources/index.example.md).
+sources/*
+!sources/index.example.md

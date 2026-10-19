@@ -4,10 +4,21 @@ Material de estudio propio, agrupado por tema. La skill `teach` lo usa así: **e
 
 ```text
 sources/
-├── index.md              # este archivo: tema → carpeta → qué cubre
-└── <slug-del-tema>/      # los PDF de ese tema
-    └── *.pdf
+├── index.md              # este archivo, local: tema → carpeta → qué cubre
+└── <slug-del-tema>/      # el material de ese tema (*.pdf, *.md, *.epub, lo que sea)
+    └── ...
 ```
+
+> **Nada de `sources/` se versiona.** `.gitignore` ignora todo su contenido salvo este
+> ejemplo, sin importar el formato: PDF, Markdown, EPUB, DOCX, audio, imágenes, lo que sea.
+> El índice real se crea copiando este archivo:
+>
+> ```powershell
+> copy sources\index.example.md sources\index.md
+> ```
+>
+> Ese `index.md` queda solo en tu máquina, igual que el material. Si clonás el repo en otra,
+> tenés que volver a copiarlo y a poner las fuentes.
 
 ## Reglas
 
@@ -24,4 +35,6 @@ sources/
 | _(ej.)_ Cálculo en varias variables | `calculo-varias-variables/` | integrales múltiples, campos, teorema de Green | _ejemplo — reemplazar_ |
 | _(ej.)_ Autómatas y lenguajes | `automatas/` | máquinas de estados, ER, equivalencias | _ejemplo — reemplazar_ |
 
-> Los PDF en sí están en `.gitignore` (`sources/**/*.pdf`): el índice se versiona, el material no.
+> La columna **Notas** es pública solo si este archivo se commitea — no se commitea, así que
+> podés anotar lo que quieras. Aun así, conviene que diga de dónde salió el material
+> (libro, capítulo, apunte propio) y no datos de terceros.

@@ -1,4 +1,3 @@
-##Learn
 
 A personal AI-powered learning environment built around OpenCode.
 

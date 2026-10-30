@@ -1,12 +1,12 @@
-# learn
+#Learn
 
-[![video](assets/thumbnail.png)](https://www.youtube.com/watch?v=kzcI5F4tGiU)
+A personal AI-powered learning environment built around OpenCode.
 
-This repo is a **fork** of [amosblomqvist/learn](https://github.com/amosblomqvist/learn): the learning system **Amos Blomqvist** presents in his video [How I Use AI to Learn Things](https://www.youtube.com/watch?v=kzcI5F4tGiU). The original project and the video are his — what follows is my fork of it, adapted to my own way of learning and language.
+Learn transforms AI-assisted studying into structured, interactive learning sessions. It evaluates your current understanding, builds a learning path, explains concepts step by step, reinforces knowledge through quizzes, and generates visual explanations when they add value.
 
-The original is a [pi](https://github.com/earendil-works/pi) configuration — a teaching philosophy encoded in a skill, a few small extensions, and agent definitions. This tree is the **OpenCode port**: the same methodology, re-expressed with OpenCode's agents/skills/commands/plugins and models. The original pi configuration is preserved on the [`original-project` branch](https://github.com/BrunoB705/learn/tree/original-project) and in the [upstream repo](https://github.com/amosblomqvist/learn).
+The system prioritizes your own study materials, uses research to verify information when needed, and stores session notes and learning artifacts in your Obsidian vault.
 
-The teaching philosophy lives in a skill, with small subagents for research and for drawing verified diagrams, and an Obsidian vault as the memory.
+The goal is not just to get answers, but to actually understand and retain what you learn.
 
 ## What's in it
 
